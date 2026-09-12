@@ -1,4 +1,4 @@
-package com.example.appcolombia.ui.screens
+package com.example.appcolombia.ui.Screens.splash
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
