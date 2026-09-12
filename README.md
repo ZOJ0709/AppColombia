@@ -16,7 +16,7 @@ Actualmente la aplicación cuenta con las siguientes vistas:
 Pantalla inicial de la aplicación que presenta la identidad visual de **Colombia Explorer** mientras se prepara la aplicación.
 
 <p align="center">
-<img width="1080" height="2400" alt="Screenshot_20260912_085559" src="https://github.com/user-attachments/assets/e368b593-fbde-4609-b1a7-e28bac351042" />
+<img width="300" alt="Screenshot_20260912_085559" src="https://github.com/user-attachments/assets/e368b593-fbde-4609-b1a7-e28bac351042" />
 </p>
 
 ---
@@ -26,7 +26,7 @@ Pantalla inicial de la aplicación que presenta la identidad visual de **Colombi
 Pantalla principal desde la cual el usuario puede comenzar a explorar el contenido de la aplicación.
 
 <p align="center">
-<img width="1080" height="2400" alt="Screenshot_20260912_085609" src="https://github.com/user-attachments/assets/77cb7e14-a2c3-4d4f-971a-6c03782759f9" />
+<img width="300" alt="Screenshot_20260912_085609" src="https://github.com/user-attachments/assets/77cb7e14-a2c3-4d4f-971a-6c03782759f9" />
 
 </p>
 
@@ -37,7 +37,7 @@ Pantalla principal desde la cual el usuario puede comenzar a explorar el conteni
 Vista destinada a mostrar información detallada de un departamento seleccionado.
 
 <p align="center">
-<img width="1080" height="2400" alt="Screenshot_20260912_085609" src="https://github.com/user-attachments/assets/47147051-e94d-42a7-9ea4-9bd6f38804d4" />
+<img width="300" alt="Screenshot_20260912_085609" src="https://github.com/user-attachments/assets/47147051-e94d-42a7-9ea4-9bd6f38804d4" />
 </p>
 
 ---
