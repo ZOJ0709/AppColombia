@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
 import com.example.appcolombia.data.model.Department
 import com.example.appcolombia.data.repository.ColombiaRepository
+import com.example.appcolombia.ui.Screens.splash.DepartmentDetailScreen
 import com.example.appcolombia.ui.Screens.splash.HomeScreen
 import com.example.appcolombia.ui.Screens.splash.SplashScreen
 import com.example.appcolombia.ui.theme.AppColombiaTheme
@@ -22,6 +23,14 @@ class MainActivity : ComponentActivity() {
 
                 var showSplash by remember {
                     mutableStateOf(true)
+                }
+
+                var showDetail by remember {
+                    mutableStateOf(false)
+                }
+
+                var selectedDepartment by remember {
+                    mutableStateOf<Department?>(null)
                 }
 
                 var departments by remember {
@@ -46,15 +55,26 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                if (showSplash) {
-                    SplashScreen()
-                } else {
-                    HomeScreen(
-                        departments = departments,
-                        onDepartmentClick = { department ->
-                            // Próximamente conectaremos el detalle
-                        }
-                    )
+                when {
+                    showSplash -> {
+                        SplashScreen()
+                    }
+
+                    showDetail && selectedDepartment != null -> {
+                        DepartmentDetailScreen(
+                            department = selectedDepartment!!
+                        )
+                    }
+
+                    else -> {
+                        HomeScreen(
+                            departments = departments,
+                            onDepartmentClick = { department ->
+                                selectedDepartment = department
+                                showDetail = true
+                            }
+                        )
+                    }
                 }
             }
         }
