@@ -4,11 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.*
-import com.example.appcolombia.ui.Screens.splash.DepartmentDetailScreen
+import com.example.appcolombia.data.model.Department
+import com.example.appcolombia.data.repository.ColombiaRepository
 import com.example.appcolombia.ui.Screens.splash.HomeScreen
 import com.example.appcolombia.ui.Screens.splash.SplashScreen
 import com.example.appcolombia.ui.theme.AppColombiaTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -22,17 +24,38 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf(true)
                 }
 
+                var departments by remember {
+                    mutableStateOf<List<Department>>(emptyList())
+                }
+
+                val repository = remember {
+                    ColombiaRepository()
+                }
+
+                val scope = rememberCoroutineScope()
+
                 LaunchedEffect(Unit) {
                     delay(2000)
                     showSplash = false
+
+                    scope.launch {
+                        repository.getDepartments()
+                            .onSuccess {
+                                departments = it
+                            }
+                    }
                 }
 
                 if (showSplash) {
                     SplashScreen()
                 } else {
-                    HomeScreen()
+                    HomeScreen(
+                        departments = departments,
+                        onDepartmentClick = { department ->
+                            // Próximamente conectaremos el detalle
+                        }
+                    )
                 }
-
             }
         }
     }

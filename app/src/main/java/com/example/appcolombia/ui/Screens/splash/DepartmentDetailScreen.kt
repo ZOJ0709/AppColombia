@@ -1,5 +1,7 @@
 package com.example.appcolombia.ui.Screens.splash
 
+import com.example.appcolombia.data.model.Department
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,7 +30,9 @@ private val ColombiaYellow = Color(0xFFFFD100)
 private val BackgroundColor = Color(0xFFF8F9FC)
 
 @Composable
-fun DepartmentDetailScreen() {
+fun DepartmentDetailScreen(
+    department: Department
+) {
 
     Column(
         modifier = Modifier
@@ -86,7 +90,7 @@ fun DepartmentDetailScreen() {
                 ) {
 
                     Text(
-                        text = "ANTIOQUIA",
+                        text = department.name.uppercase(),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         color = ColombiaYellow
@@ -95,14 +99,14 @@ fun DepartmentDetailScreen() {
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Antioquia",
+                        text = department.name,
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
 
                     Text(
-                        text = "Región Andina 🇨🇴",
+                        text = "Departamento de Colombia 🇨🇴",
                         fontSize = 14.sp,
                         color = Color.White
                     )
@@ -122,35 +126,35 @@ fun DepartmentDetailScreen() {
         Spacer(modifier = Modifier.height(12.dp))
 
         InfoCard(
-            title = "Capital",
-            value = "Medellín"
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        InfoCard(
-            title = "Región",
-            value = "Andina"
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        InfoCard(
-            title = "Población",
-            value = "Más de 6 millones"
+            title = "ID",
+            value = department.id.toString()
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         InfoCard(
             title = "Municipios",
-            value = "125"
+            value = department.municipalities?.toString() ?: "No disponible"
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        InfoCard(
+            title = "Población",
+            value = department.population?.toString() ?: "No disponible"
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        InfoCard(
+            title = "Superficie",
+            value = department.surface?.toString() ?: "No disponible"
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Sobre Antioquia",
+            text = "Descripción",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = ColombiaBlue
@@ -159,8 +163,7 @@ fun DepartmentDetailScreen() {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Antioquia es uno de los departamentos más importantes de Colombia. " +
-                    "Su capital es Medellín y hace parte de la región Andina.",
+            text = department.description ?: "No hay descripción disponible.",
             fontSize = 13.sp,
             color = Color.DarkGray,
             lineHeight = 20.sp

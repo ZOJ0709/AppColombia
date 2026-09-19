@@ -1,5 +1,7 @@
 package com.example.appcolombia.ui.Screens.splash
 
+import com.example.appcolombia.data.model.Department
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,14 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,7 +39,10 @@ data class Category(
 )
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    departments: List<Department>,
+    onDepartmentClick: (Department) -> Unit
+) {
 
     Column(
         modifier = Modifier
@@ -197,45 +200,53 @@ fun HomeScreen() {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = ColombiaBlue
-            )
-        ) {
+        if (departments.isNotEmpty()) {
 
-            Box(
-                modifier = Modifier.fillMaxSize()
+            val department = departments.first()
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = ColombiaBlue
+                ),
+                onClick = {
+                    onDepartmentClick(department)
+                }
             ) {
 
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(16.dp)
+                Box(
+                    modifier = Modifier.fillMaxSize()
                 ) {
 
-                    Text(
-                        text = "ANTIOQUIA",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = ColombiaYellow
-                    )
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(16.dp)
+                    ) {
 
-                    Text(
-                        text = "Medellín",
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+                        Text(
+                            text = department.name.uppercase(),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = ColombiaYellow
+                        )
 
-                    Text(
-                        text = "Región Andina",
-                        fontSize = 12.sp,
-                        color = Color.White
-                    )
+                        Text(
+                            text = "Municipios: ${department.municipalities ?: "N/A"}",
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+
+                        Text(
+                            text = "Población: ${department.population ?: "N/A"}",
+                            fontSize = 12.sp,
+                            color = Color.White
+                        )
+                    }
                 }
             }
         }
