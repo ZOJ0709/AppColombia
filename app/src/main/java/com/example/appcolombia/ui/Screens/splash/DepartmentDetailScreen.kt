@@ -3,6 +3,9 @@ package com.example.appcolombia.ui.Screens.splash
 
 import com.example.appcolombia.data.model.Department
 
+
+import com.example.appcolombia.data.model.City
+import com.example.appcolombia.data.model.Region
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +39,8 @@ private val BackgroundColor = Color(0xFFF8F9FC)
 @Composable
 fun DepartmentDetailScreen(
     department: Department,
+    region: Region?,
+    capital: City?,
     onBackClick: () -> Unit
 ) {
 
@@ -173,15 +178,83 @@ fun DepartmentDetailScreen(
 
         InfoCard(
             title = "🌎 Región",
-            value = department.regionId?.toString() ?: "No disponible"
+            value = region?.name ?: "No disponible"
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        InfoCard(
-            title = "🏛️ ID de capital",
-            value = department.cityCapitalId?.toString() ?: "No disponible"
+        Text(
+            text = "🏛️ Capital",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = ColombiaBlue
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 2.dp
+            )
+        ) {
+
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+
+                Text(
+                    text = capital?.name ?: "No disponible",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ColombiaBlue
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = "👥 Población: ${
+                        capital?.population?.toString() ?: "No disponible"
+                    }",
+                    fontSize = 13.sp,
+                    color = Color.DarkGray
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "📐 Superficie: ${
+                        capital?.surface?.let { "$it km²" } ?: "No disponible"
+                    }",
+                    fontSize = 13.sp,
+                    color = Color.DarkGray
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "📮 Código postal: ${
+                        capital?.postalCode ?: "No disponible"
+                    }",
+                    fontSize = 13.sp,
+                    color = Color.DarkGray
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    text = capital?.description
+                        ?: "No hay descripción disponible.",
+                    fontSize = 13.sp,
+                    color = Color.Gray,
+                    lineHeight = 20.sp
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
