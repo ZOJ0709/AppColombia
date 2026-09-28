@@ -45,14 +45,13 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(Unit) {
                     delay(2000)
-                    showSplash = false
 
-                    scope.launch {
-                        repository.getDepartments()
-                            .onSuccess {
-                                departments = it
-                            }
-                    }
+                    repository.getDepartments()
+                        .onSuccess {
+                            departments = it
+                        }
+
+                    showSplash = false
                 }
 
                 when {

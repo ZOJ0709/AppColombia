@@ -1,9 +1,10 @@
+
 package com.example.appcolombia.ui.Screens.splash
 
 import com.example.appcolombia.data.model.Department
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -40,6 +43,7 @@ fun DepartmentDetailScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)
+            .verticalScroll(rememberScrollState())
             .padding(20.dp)
     ) {
 
@@ -122,7 +126,7 @@ fun DepartmentDetailScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Información",
+            text = "Información general",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = ColombiaBlue
@@ -131,32 +135,55 @@ fun DepartmentDetailScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         InfoCard(
-            title = "ID",
+            title = "🆔 ID",
             value = department.id.toString()
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         InfoCard(
-            title = "Municipios",
+            title = "🏙️ Municipios",
             value = department.municipalities?.toString() ?: "No disponible"
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         InfoCard(
-            title = "Población",
+            title = "👥 Población",
             value = department.population?.toString() ?: "No disponible"
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         InfoCard(
-            title = "Superficie",
-            value = department.surface?.toString() ?: "No disponible"
+            title = "📐 Superficie",
+            value = department.surface?.let {
+                "$it km²"
+            } ?: "No disponible"
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
+
+        InfoCard(
+            title = "📞 Prefijo telefónico",
+            value = department.phonePrefix ?: "No disponible"
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        InfoCard(
+            title = "🌎 Región",
+            value = department.regionId?.toString() ?: "No disponible"
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        InfoCard(
+            title = "🏛️ ID de capital",
+            value = department.cityCapitalId?.toString() ?: "No disponible"
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "Descripción",
@@ -167,12 +194,28 @@ fun DepartmentDetailScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
-            text = department.description ?: "No hay descripción disponible.",
-            fontSize = 13.sp,
-            color = Color.DarkGray,
-            lineHeight = 20.sp
-        )
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(14.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 2.dp
+            )
+        ) {
+
+            Text(
+                text = department.description
+                    ?: "No hay descripción disponible.",
+                fontSize = 13.sp,
+                color = Color.DarkGray,
+                lineHeight = 20.sp,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
     }
 }
 
@@ -197,7 +240,8 @@ fun InfoCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
             Text(
@@ -215,3 +259,4 @@ fun InfoCard(
         }
     }
 }
+

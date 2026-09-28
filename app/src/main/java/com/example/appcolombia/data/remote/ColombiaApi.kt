@@ -1,6 +1,8 @@
 package com.example.appcolombia.data.remote
 
+import com.example.appcolombia.data.model.City
 import com.example.appcolombia.data.model.Department
+import com.example.appcolombia.data.model.Region
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -15,6 +17,16 @@ interface ColombiaApi {
     suspend fun getDepartmentById(
         @Path("id") id: Int
     ): Department
+
+    @GET("v1/Region/{id}")
+    suspend fun getRegionById(
+        @Path("id") id: Int
+    ): Region
+
+    @GET("v1/City/{id}")
+    suspend fun getCityById(
+        @Path("id") id: Int
+    ): City
 }
 
 object RetrofitClient {
