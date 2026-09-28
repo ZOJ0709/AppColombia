@@ -2,6 +2,7 @@ package com.example.appcolombia.ui.Screens.splash
 
 import com.example.appcolombia.data.model.Department
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,7 +32,8 @@ private val BackgroundColor = Color(0xFFF8F9FC)
 
 @Composable
 fun DepartmentDetailScreen(
-    department: Department
+    department: Department,
+    onBackClick: () -> Unit
 ) {
 
     Column(
@@ -52,7 +54,10 @@ fun DepartmentDetailScreen(
                 text = "‹",
                 fontSize = 36.sp,
                 color = ColombiaBlue,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable {
+                    onBackClick()
+                }
             )
 
             Spacer(modifier = Modifier.width(8.dp))

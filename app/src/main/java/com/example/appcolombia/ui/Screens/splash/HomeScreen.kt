@@ -2,6 +2,10 @@ package com.example.appcolombia.ui.Screens.splash
 
 import com.example.appcolombia.data.model.Department
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +47,14 @@ fun HomeScreen(
     departments: List<Department>,
     onDepartmentClick: (Department) -> Unit
 ) {
+
+    var searchText by remember {
+        mutableStateOf("")
+    }
+
+    val filteredDepartments = departments.filter {
+        it.name.contains(searchText, ignoreCase = true)
+    }
 
     Column(
         modifier = Modifier
@@ -89,8 +101,10 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(18.dp))
 
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = searchText,
+            onValueChange = {
+                searchText = it
+            },
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
                 Text("Buscar en Colombia...")
@@ -105,6 +119,7 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+
             Text(
                 text = "Explora Colombia",
                 fontSize = 17.sp,
@@ -183,15 +198,16 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+
             Text(
-                text = "Departamentos destacados",
+                text = "Departamentos",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = ColombiaBlue
             )
 
             Text(
-                text = "Ver todos →",
+                text = "${filteredDepartments.size} encontrados",
                 fontSize = 12.sp,
                 color = ColombiaYellow,
                 fontWeight = FontWeight.Bold
@@ -200,55 +216,67 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        if (departments.isNotEmpty()) {
+        if (filteredDepartments.isNotEmpty()) {
 
-            val department = departments.first()
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(150.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = ColombiaBlue
-                ),
-                onClick = {
-                    onDepartmentClick(department)
-                }
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier.height(230.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
 
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+                items(filteredDepartments) { department ->
 
-                    Column(
+                    Card(
                         modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(16.dp)
+                            .fillMaxWidth()
+                            .height(105.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = ColombiaBlue
+                        ),
+                        onClick = {
+                            onDepartmentClick(department)
+                        }
                     ) {
 
-                        Text(
-                            text = department.name.uppercase(),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = ColombiaYellow
-                        )
+                        Column(
+                            modifier = Modifier.padding(14.dp)
+                        ) {
 
-                        Text(
-                            text = "Municipios: ${department.municipalities ?: "N/A"}",
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
+                            Text(
+                                text = department.name.uppercase(),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = ColombiaYellow
+                            )
 
-                        Text(
-                            text = "Población: ${department.population ?: "N/A"}",
-                            fontSize = 12.sp,
-                            color = Color.White
-                        )
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            Text(
+                                text = "${department.municipalities ?: "N/A"} municipios",
+                                fontSize = 13.sp,
+                                color = Color.White
+                            )
+
+                            Text(
+                                text = "Población: ${department.population ?: "N/A"}",
+                                fontSize = 10.sp,
+                                color = Color.White
+                            )
+                        }
                     }
                 }
             }
+
+        } else {
+
+            Text(
+                text = "No encontramos ese departamento 😕",
+                fontSize = 14.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(12.dp)
+            )
         }
     }
 }

@@ -62,7 +62,10 @@ class MainActivity : ComponentActivity() {
 
                     showDetail && selectedDepartment != null -> {
                         DepartmentDetailScreen(
-                            department = selectedDepartment!!
+                            department = selectedDepartment!!,
+                            onBackClick = {
+                                showDetail = false
+                            }
                         )
                     }
 
