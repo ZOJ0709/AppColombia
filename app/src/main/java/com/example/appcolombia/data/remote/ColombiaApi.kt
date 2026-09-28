@@ -27,6 +27,9 @@ interface ColombiaApi {
     suspend fun getCityById(
         @Path("id") id: Int
     ): City
+
+    @GET("v1/City")
+    suspend fun getCities(): List<City>
 }
 
 object RetrofitClient {

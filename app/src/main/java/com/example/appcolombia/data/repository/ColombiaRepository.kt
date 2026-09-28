@@ -44,4 +44,12 @@ class ColombiaRepository {
             Result.failure(e)
         }
     }
+    suspend fun getCities(): Result<List<City>> {
+        return try {
+            val cities = api.getCities()
+            Result.success(cities)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
