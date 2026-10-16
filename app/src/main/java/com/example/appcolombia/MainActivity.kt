@@ -13,11 +13,13 @@ import com.example.appcolombia.data.model.Region
 import com.example.appcolombia.data.repository.AuthRepository
 import com.example.appcolombia.data.repository.ColombiaRepository
 import com.example.appcolombia.ui.Screens.auth.LoginScreen
+import com.example.appcolombia.ui.Screens.auth.ProfileScreen
 import com.example.appcolombia.ui.Screens.auth.RegisterScreen
 import com.example.appcolombia.ui.Screens.splash.DepartmentDetailScreen
 import com.example.appcolombia.ui.Screens.splash.HomeScreen
 import com.example.appcolombia.ui.Screens.splash.SplashScreen
 import com.example.appcolombia.ui.theme.AppColombiaTheme
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -26,7 +28,8 @@ private enum class AppScreen {
     LOGIN,
     REGISTER,
     HOME,
-    DETAIL
+    DETAIL,
+    PROFILE
 }
 
 class MainActivity : ComponentActivity() {
@@ -186,6 +189,21 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
+                    }
+
+                    AppScreen.PROFILE -> {
+                        val user = FirebaseAuth.getInstance().currentUser
+
+                        ProfileScreen(
+                            userName = user?.displayName
+                                ?.takeIf { it.isNotBlank() }
+                                ?: "Usuario",
+                            userEmail = user?.email
+                                ?: "Correo no disponible",
+                            onBackClick = {
+                                currentScreen = AppScreen.HOME
+                            }
+                        )
                     }
                 }
             }
