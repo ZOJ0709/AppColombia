@@ -94,12 +94,10 @@ class MainActivity : ComponentActivity() {
                     AppScreen.LOGIN -> {
                         LoginScreen(
                             onLoginClick = { email, password ->
-
                                 authRepository.login(
                                     email,
                                     password
                                 ) { success, error ->
-
                                     if (success) {
                                         currentScreen = AppScreen.HOME
                                     } else {
@@ -120,13 +118,11 @@ class MainActivity : ComponentActivity() {
                     AppScreen.REGISTER -> {
                         RegisterScreen(
                             onRegisterClick = { name, email, password ->
-
                                 authRepository.register(
                                     name,
                                     email,
                                     password
                                 ) { success, error ->
-
                                     if (success) {
                                         currentScreen = AppScreen.HOME
                                     } else {
@@ -147,14 +143,19 @@ class MainActivity : ComponentActivity() {
                     AppScreen.HOME -> {
                         HomeScreen(
                             departments = departments,
+                            onLogoutClick = {
+                                authRepository.logout()
+                                currentScreen = AppScreen.LOGIN
+                            },
+                            onProfileClick = {
+                                currentScreen = AppScreen.PROFILE
+                            },
                             onDepartmentClick = { department ->
-
                                 selectedDepartment = department
                                 selectedRegion = null
                                 selectedCapital = null
 
                                 scope.launch {
-
                                     department.regionId?.let { regionId ->
                                         colombiaRepository
                                             .getRegionById(regionId)
@@ -179,7 +180,6 @@ class MainActivity : ComponentActivity() {
 
                     AppScreen.DETAIL -> {
                         selectedDepartment?.let { department ->
-
                             DepartmentDetailScreen(
                                 department = department,
                                 region = selectedRegion,

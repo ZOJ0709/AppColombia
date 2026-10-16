@@ -1,14 +1,7 @@
 package com.example.appcolombia.ui.Screens.splash
 
-import com.example.appcolombia.data.model.Department
-
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,13 +17,19 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.appcolombia.data.model.Department
 
 private val ColombiaBlue = Color(0xFF003893)
 private val ColombiaYellow = Color(0xFFFFD100)
@@ -45,9 +44,10 @@ data class Category(
 @Composable
 fun HomeScreen(
     departments: List<Department>,
-    onDepartmentClick: (Department) -> Unit
+    onDepartmentClick: (Department) -> Unit,
+    onLogoutClick: () -> Unit,
+    onProfileClick: () -> Unit
 ) {
-
     var searchText by remember {
         mutableStateOf("")
     }
@@ -56,13 +56,19 @@ fun HomeScreen(
         it.name.contains(searchText, ignoreCase = true)
     }
 
+    val categories = listOf(
+        Category("Departamentos", "32 registros", "🗺️"),
+        Category("Ciudades", "1122 registros", "🏙️"),
+        Category("Personajes", "48 registros", "👤"),
+        Category("Regiones", "6 registros", "📍")
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)
             .padding(20.dp)
     ) {
-
         Text(
             text = "Hola 👋",
             fontSize = 13.sp,
@@ -76,7 +82,6 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Text(
                 text = "Descubre Colombia",
                 fontSize = 24.sp,
@@ -84,17 +89,32 @@ fun HomeScreen(
                 color = ColombiaBlue
             )
 
-            Card(
-                shape = RoundedCornerShape(50),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                )
+            Column(
+                horizontalAlignment = Alignment.End
             ) {
-                Text(
-                    text = "👤",
-                    modifier = Modifier.padding(10.dp),
-                    fontSize = 18.sp
-                )
+                Card(
+                    onClick = onProfileClick,
+                    shape = RoundedCornerShape(50),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White
+                    )
+                ) {
+                    Text(
+                        text = "👤",
+                        modifier = Modifier.padding(10.dp),
+                        fontSize = 18.sp
+                    )
+                }
+
+                TextButton(
+                    onClick = onLogoutClick
+                ) {
+                    Text(
+                        text = "Cerrar sesión",
+                        color = ColombiaBlue,
+                        fontSize = 11.sp
+                    )
+                }
             }
         }
 
@@ -119,7 +139,6 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
             Text(
                 text = "Explora Colombia",
                 fontSize = 17.sp,
@@ -137,22 +156,13 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        val categories = listOf(
-            Category("Departamentos", "32 registros", "🗺️"),
-            Category("Ciudades", "1122 registros", "🏙️"),
-            Category("Personajes", "48 registros", "👤"),
-            Category("Regiones", "6 registros", "📍")
-        )
-
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.height(190.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-
             items(categories) { category ->
-
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(14.dp),
@@ -163,11 +173,9 @@ fun HomeScreen(
                         defaultElevation = 2.dp
                     )
                 ) {
-
                     Column(
                         modifier = Modifier.padding(14.dp)
                     ) {
-
                         Text(
                             text = category.emoji,
                             fontSize = 22.sp
@@ -198,7 +206,6 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
             Text(
                 text = "Departamentos",
                 fontSize = 16.sp,
@@ -217,16 +224,13 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(10.dp))
 
         if (filteredDepartments.isNotEmpty()) {
-
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier.height(230.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-
                 items(filteredDepartments) { department ->
-
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -239,11 +243,9 @@ fun HomeScreen(
                             onDepartmentClick(department)
                         }
                     ) {
-
                         Column(
                             modifier = Modifier.padding(14.dp)
                         ) {
-
                             Text(
                                 text = department.name.uppercase(),
                                 fontSize = 12.sp,
@@ -268,9 +270,7 @@ fun HomeScreen(
                     }
                 }
             }
-
         } else {
-
             Text(
                 text = "No encontramos ese departamento 😕",
                 fontSize = 14.sp,
