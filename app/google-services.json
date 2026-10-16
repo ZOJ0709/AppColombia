@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "970636542481",
+    "project_id": "app-colombia-a0224",
+    "storage_bucket": "app-colombia-a0224.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:970636542481:android:2d2c159d094d3819e567b0",
+        "android_client_info": {
+          "package_name": "com.example.appcolombia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBM1O4B_kSv9NmbH-UO7_T5zzyko0nywh8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
