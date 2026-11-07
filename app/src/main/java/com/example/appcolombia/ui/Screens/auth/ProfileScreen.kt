@@ -1,4 +1,3 @@
-
 package com.example.appcolombia.ui.Screens.auth
 
 import android.net.Uri
@@ -31,10 +30,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -42,10 +43,11 @@ import com.example.appcolombia.data.repository.CloudinaryRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 private val ColombiaBlue = Color(0xFF003893)
 private val ColombiaYellow = Color(0xFFFFD100)
-private val BackgroundColor = Color(0xFFF8F9FC)
+private val BackgroundColor = Color(0xFFF5F7FC)
 
 @Composable
 fun ProfileScreen(
@@ -55,11 +57,17 @@ fun ProfileScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val firebaseUser = FirebaseAuth.getInstance().currentUser
 
     var imageUrl by remember {
-        mutableStateOf(firebaseUser?.photoUrl?.toString().orEmpty())
+        mutableStateOf(
+            FirebaseAuth.getInstance()
+                .currentUser
+                ?.photoUrl
+                ?.toString()
+                .orEmpty()
+        )
     }
+
     var isUploading by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
     var isError by remember { mutableStateOf(false) }
@@ -67,45 +75,37 @@ fun ProfileScreen(
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        if (uri != null) {
+        if (uri != null && !isUploading) {
             scope.launch {
                 isUploading = true
-                message = "Subiendo imagen..."
+                message = "Subiendo tu foto..."
                 isError = false
 
                 try {
+                    val user = FirebaseAuth.getInstance().currentUser
+                        ?: throw Exception("No hay una sesión activa.")
+
                     val uploadedUrl = CloudinaryRepository.uploadImage(
                         contentResolver = context.contentResolver,
                         imageUri = uri
                     )
-
-                    val user = FirebaseAuth.getInstance().currentUser
-                        ?: throw Exception("No hay una sesión activa")
 
                     val profileUpdates =
                         UserProfileChangeRequest.Builder()
                             .setPhotoUri(Uri.parse(uploadedUrl))
                             .build()
 
-                    user.updateProfile(profileUpdates)
-                        .addOnCompleteListener { task ->
-                            isUploading = false
+                    user.updateProfile(profileUpdates).await()
 
-                            if (task.isSuccessful) {
-                                imageUrl = uploadedUrl
-                                message = "¡Foto de perfil actualizada!"
-                                isError = false
-                            } else {
-                                message = task.exception?.localizedMessage
-                                    ?: "La foto subió, pero no se pudo actualizar Firebase"
-                                isError = true
-                            }
-                        }
+                    imageUrl = uploadedUrl
+                    message = "¡Foto de perfil actualizada!"
+                    isError = false
                 } catch (exception: Exception) {
-                    isUploading = false
                     message = exception.localizedMessage
-                        ?: "No se pudo subir la imagen"
+                        ?: "No se pudo actualizar la foto. Inténtalo de nuevo."
                     isError = true
+                } finally {
+                    isUploading = false
                 }
             }
         }
@@ -115,132 +115,139 @@ fun ProfileScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)
-            .padding(24.dp),
+            .padding(horizontal = 24.dp, vertical = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = "Mi perfil",
-            fontSize = 28.sp,
+            fontSize = 30.sp,
             fontWeight = FontWeight.Bold,
             color = ColombiaBlue
         )
 
-        Spacer(modifier = Modifier.height(28.dp))
-
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .background(ColombiaBlue, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            if (imageUrl.isNotBlank()) {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = "Foto de perfil",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(ColombiaBlue, CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Text(
-                    text = userName.firstOrNull()?.uppercase() ?: "U",
-                    fontSize = 48.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = ColombiaYellow
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Foto de perfil",
-            fontSize = 13.sp,
-            color = Color.Gray
+            text = "Tu espacio personal en Colombia Explorer",
+            fontSize = 14.sp,
+            color = Color.DarkGray,
+            textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Button(
-            onClick = { imagePicker.launch("image/*") },
-            enabled = !isUploading,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = ColombiaBlue
-            )
-        ) {
-            Text(
-                text = if (isUploading) {
-                    "Subiendo..."
-                } else {
-                    "Cambiar foto"
-                },
-                color = Color.White
-            )
-        }
-
-        if (isUploading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(28.dp),
-                color = ColombiaBlue
-            )
-        }
-
-        if (message.isNotBlank()) {
-            Text(
-                text = message,
-                color = if (isError) Color.Red else ColombiaBlue,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(
                 containerColor = Color.White
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 4.dp
             )
         ) {
             Column(
-                modifier = Modifier.padding(20.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Box(
+                    modifier = Modifier
+                        .size(132.dp)
+                        .clip(CircleShape)
+                        .background(ColombiaBlue),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (imageUrl.isNotBlank()) {
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = "Foto de perfil",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Text(
+                            text = userName
+                                .trim()
+                                .firstOrNull()
+                                ?.uppercase()
+                                ?: "U",
+                            fontSize = 52.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = ColombiaYellow
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Text(
-                    text = "Nombre",
-                    fontSize = 13.sp,
-                    color = Color.Gray
+                    text = userName.ifBlank { "Usuario" },
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ColombiaBlue,
+                    textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
-                    text = userName,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = ColombiaBlue
+                    text = userEmail.ifBlank { "Correo no disponible" },
+                    fontSize = 14.sp,
+                    color = Color.DarkGray,
+                    textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(22.dp))
 
-                Text(
-                    text = "Correo electrónico",
-                    fontSize = 13.sp,
-                    color = Color.Gray
-                )
+                Button(
+                    onClick = {
+                        imagePicker.launch("image/*")
+                    },
+                    enabled = !isUploading,
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = ColombiaBlue
+                    )
+                ) {
+                    if (isUploading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            color = Color.White,
+                            strokeWidth = 2.dp
+                        )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.size(10.dp))
 
-                Text(
-                    text = userEmail,
-                    fontSize = 16.sp,
-                    color = ColombiaBlue
-                )
+                        Text("Subiendo foto...")
+                    } else {
+                        Text("Cambiar foto de perfil")
+                    }
+                }
+
+                if (message.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = message,
+                        color = if (isError) {
+                            Color(0xFFB3261E)
+                        } else {
+                            Color(0xFF237A3B)
+                        },
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         TextButton(
             onClick = onBackClick,
@@ -248,7 +255,8 @@ fun ProfileScreen(
         ) {
             Text(
                 text = "Volver a Colombia Explorer",
-                color = ColombiaBlue
+                color = ColombiaBlue,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }
